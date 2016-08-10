@@ -11,12 +11,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START app_yaml]
 runtime: nodejs
 vm: true
-# [START env]
-env_variables:
-  GCLOUD_PROJECT: 959834553660
-  GCLOUD_STORAGE_BUCKET: egg-image
+automatic_scaling:
+  min_num_instances: 1
+  max_num_instances: 20
+  cool_down_period_sec: 120 # default value
+  cpu_utilization:
+    target_utilization: 0.7
 # [END env]
 # [END app_yaml]

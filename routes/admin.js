@@ -30,4 +30,22 @@ router.post("/class", upload.single("file"), function (req, res, next) {
         });
 });
 
+router.post("/notice",function(req,res,next){
+    models.Notice.create({
+        title: req.body.title,
+        image: req.body.image,
+        body: req.body.body,
+        target: req.body.target
+    }).then(function(result){
+        res.json({result:true});
+    });
+});
+router.get("/notice",function(req,res,next){
+    models.Notice.findAll({
+        order: [['createdAt','desc']]
+    }).then(function(notices){
+        res.json(notices);
+    })
+});
+
 module.exports = router;

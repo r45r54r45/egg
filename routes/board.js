@@ -16,9 +16,9 @@ var multer = require('multer')({
 });
 var gcloud = require('gcloud');
 var storage = gcloud.storage({
-    projectId: 959834553660
+    projectId: 901522536554
 });
-var bucket = storage.bucket("egg_image");
+var bucket = storage.bucket("image_yic");
 router.get('/free_list', function (req, res, next) {
     //get board_type list and some boards
     Board.findAll({

@@ -3,7 +3,7 @@
     "username": "root",
     "password": null,
     "database": "egg",
-    "host": "104.199.189.34",
+    "host": "104.199.128.23",
     "dialect": "mysql",
     "timezone": "+09:00"
   },
@@ -11,7 +11,7 @@
     "username": "root",
     "password": null,
     "database": "egg",
-    "host": "104.199.189.34",
+    "host": "104.199.128.23",
     "dialect": "mysql",
     "timezone": "+09:00"
   },
@@ -19,7 +19,7 @@
     "username": "root",
     "password": null,
     "database": "egg",
-    "host": "104.199.189.34",
+    "host": "104.199.128.23",
     "dialect": "mysql",
     "timezone": "+09:00"
   }
