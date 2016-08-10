@@ -1,0 +1,1 @@
+GET user/points/:id => get total point of that user
