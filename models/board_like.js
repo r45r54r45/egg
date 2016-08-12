@@ -5,8 +5,8 @@ module.exports = function (sequelize, DataTypes) {
     },{
         classMethods:{
             associate:function(models){
-               
-                
+               Board_like.belongsTo(models.Board);
+                Board_like.belongsTo(models.User);
             }
         }
     });

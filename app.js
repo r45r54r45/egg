@@ -10,6 +10,7 @@ var _users = require('./routes/users');
 var _board=require('./routes/board');
 var _admin=require('./routes/admin');
 var _class=require('./routes/class');
+var _notice=require('./routes/notice');
 
 
 
@@ -48,6 +49,7 @@ app.use('/user', _users);
 app.use('/board', _board);
 app.use('/admin', _admin);
 app.use('/class',_class);
+app.use('/notice',_notice);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

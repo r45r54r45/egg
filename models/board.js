@@ -21,6 +21,8 @@ module.exports = function (sequelize, DataTypes) {
             associate:function(models){
                 Board.hasMany(models.Board_like);
                 Board.hasMany(models.Board_comment);
+                Board.belongsTo(models.User);
+                Board.belongsTo(models.Board_type);
             }
 
         }

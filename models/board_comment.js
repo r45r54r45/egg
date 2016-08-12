@@ -6,8 +6,8 @@ module.exports = function (sequelize, DataTypes) {
     },{
         classMethods:{
             associate:function(models){
-                
-
+                Board_comment.belongsTo(models.Board);
+                Board_comment.belongsTo(models.User);
             }
         }
     });

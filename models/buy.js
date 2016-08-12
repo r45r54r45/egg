@@ -6,7 +6,8 @@ module.exports = function (sequelize, DataTypes) {
     },{
         classMethods:{
             associate:function(models){
-
+                Buy.belongsTo(models.Class);
+                Buy.belongsTo(models.User);
                 
             }
         }

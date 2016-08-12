@@ -23,6 +23,7 @@ module.exports = function (sequelize, DataTypes) {
         classMethods:{
             associate:function(models){
                 Assess.hasMany(models.Assess_comment);
+                Assess.belongsTo(models.User);
             }
         }
     });
