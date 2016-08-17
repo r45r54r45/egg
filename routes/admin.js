@@ -31,13 +31,70 @@ router.post("/class", upload.single("file"), function (req, res, next) {
 });
 
 router.post("/notice",function(req,res,next){
+    var _res=res;
+    var target=req.body.target.split(",");
     models.Notice.create({
         title: req.body.title,
         image: req.body.image,
         body: req.body.body,
         target: req.body.target
     }).then(function(result){
-        res.json({result:true});
+        models.User.findAll({
+            attributes: ['push_id'],
+            where: {
+                major: {
+                    $in: target
+                }
+            }
+        }).then(function(data){
+
+            var target=[];
+            data.forEach(function(item, index){
+                target.push(item.dataValues.push_id);
+            });
+            console.log(target);
+            var sendNotification = function(data) {
+                var headers = {
+                    "Content-Type": "application/json",
+                    "Authorization": "Basic NmZiYWM5NDctZjc2ZS00Zjg4LWEwY2QtYzYwNzExYWYwODQz"
+                };
+
+                var options = {
+                    host: "onesignal.com",
+                    port: 443,
+                    path: "/api/v1/notifications",
+                    method: "POST",
+                    headers: headers
+                };
+
+                var https = require('https');
+                var req = https.request(options, function(res) {
+                    res.on('data', function(data) {
+                        console.log("Response:");
+                        console.log(JSON.parse(data));
+                        _res.json({result:true,data: JSON.parse(data)});
+                    });
+                });
+
+                req.on('error', function(e) {
+                    console.log("ERROR:");
+                    console.log(e);
+                    _res.json({result:true,err: e});
+                });
+
+                req.write(JSON.stringify(data));
+                req.end();
+            };
+
+            var message = {
+                app_id: "7ad2ec95-bbbc-4a28-aaf0-097ed2de2177",
+                contents: {"en": "새로운 공지가 도착했습니다."},
+                include_player_ids: target,
+                data: {"type":"notice"}
+            };
+
+            sendNotification(message);
+        });
     });
 });
 router.get("/notice",function(req,res,next){

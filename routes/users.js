@@ -1,6 +1,8 @@
 var express = require('express');
 var router = express.Router();
 var path = require("path");
+var models = require('../models');
+
 /* GET users listing. */
 router.get('/', function (req, res, next) {
     res.sendFile(path.join(__dirname + '/../views/form.html'));
@@ -28,5 +30,17 @@ router.post('/login', function (req, res, next) {
                 res.json({login:false});
             }
         })
+});
+router.post('/register',function(req,res,next){
+    models.User.create({
+        push_id: req.body.push_id,
+        major: req.body.major,
+        school_num: req.school_num,
+        username: req.body.username
+    }).then(function(){
+        res.json({result:true});
+    },function(){
+        res.json({result:false});
+    })
 });
 module.exports = router;

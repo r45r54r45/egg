@@ -4,7 +4,8 @@ module.exports = function (sequelize, DataTypes) {
     var User = sequelize.define("User", {
         username: DataTypes.STRING,
         school_num: DataTypes.STRING,
-        major: DataTypes.STRING(100)
+        major: DataTypes.STRING(100),
+        push_id: DataTypes.STRING(500)
     }, {
         classMethods: {
             associate: function (models) {
