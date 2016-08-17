@@ -17,7 +17,7 @@ router.post("/list/:start",function(req,res,next){
                $like: '%'+major+'%'
             }
          },
-         attributes: ['title','image','body'],
+         attributes: ['title','image','body','createdAt'],
          order:[['createdAt','desc']],
          limit:10,
          offset: req.params.start
