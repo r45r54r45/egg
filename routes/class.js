@@ -151,7 +151,13 @@ router.post("/assess",function(req,res,next){
         rating:data.rating,
         UserId:data.userId,
         ClassId:data.classId
+    }).then(function(){
+        res.json({result:true});
     });
 });
-
+router.get("/tag",function(req,res,next){
+    models.Tag.findAll().then(function(data){
+        res.json(data);
+    });
+});
 module.exports = router;

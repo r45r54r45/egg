@@ -37,8 +37,8 @@ router.post('/register',function(req,res,next){
         major: req.body.major,
         school_num: req.school_num,
         username: req.body.username
-    }).then(function(){
-        res.json({result:true});
+    }).then(function(data){
+        res.json({result:true,data: data.dataValues});
     },function(){
         res.json({result:false});
     })
