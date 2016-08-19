@@ -10,10 +10,10 @@ router.get('/', function (req, res, next) {
 router.post('/login', function (req, res, next) {
     var Horseman = require('node-horseman');
     var horseman = new Horseman();
-    var num=0;
+    var num = 0;
     horseman
-        .on("urlChanged",function(url){
-            if(url=="https://ysweb.yonsei.ac.kr/busTest/notice2.jsp"){
+        .on("urlChanged", function (url) {
+            if (url == "https://ysweb.yonsei.ac.kr/busTest/notice2.jsp") {
                 num++;
             }
         })
@@ -22,25 +22,33 @@ router.post('/login', function (req, res, next) {
         .type('input[id="password"]', req.body.pw)
         .click('.submit>a')
         .wait(2000)
-        .then(function(){
+        .then(function () {
             horseman.close();
-            if(num==1){
-                res.json({login:true});
-            }else{
-                res.json({login:false});
+            if (num == 1) {
+                res.json({login: true});
+            } else {
+                res.json({login: false});
             }
         })
 });
-router.post('/register',function(req,res,next){
-    models.User.create({
-        push_id: req.body.push_id,
-        major: req.body.major,
-        school_num: req.school_num,
-        username: req.body.username
-    }).then(function(data){
-        res.json({result:true,data: data.dataValues});
-    },function(){
-        res.json({result:false});
-    })
+router.post('/register', function (req, res, next) {
+    models.User.findOrCreate({
+        where: {
+            school_num: req.body.school_num
+        },
+        defaults: {
+            push_id: req.body.push_id,
+            major: req.body.major,
+            username: req.body.username
+        }
+    }).spread(function (user, created) {
+        res.json({
+            result: created,
+            data: user.get({
+                plain: true
+            })
+        });
+    });
+
 });
 module.exports = router;

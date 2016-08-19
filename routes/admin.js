@@ -88,7 +88,7 @@ router.post("/notice",function(req,res,next){
 
             var message = {
                 app_id: "7ad2ec95-bbbc-4a28-aaf0-097ed2de2177",
-                contents: {"en": "새로운 공지가 도착했습니다."},
+                contents: {"en": "New Notice has Arrived! Check News Feed"},
                 include_player_ids: target,
                 data: {"type":"notice"}
             };

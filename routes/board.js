@@ -1,5 +1,5 @@
 var express = require('express');
-var app=express();
+var app = express();
 var router = express.Router();
 var models = require('../models');
 var fs = require('fs');
@@ -25,13 +25,13 @@ router.get('/free_list', function (req, res, next) {
         where: {
             BoardTypeId: 1
         },
-        include:[{
+        include: [{
             model: User,
             attributes: ['username']
         }],
-        attributes: ['id', 'title','body','createdAt','heart','comment'],
+        attributes: ['id', 'title', 'body', 'createdAt', 'heart', 'comment'],
         limit: 10,
-        order: [['createdAt','desc']]
+        order: [['createdAt', 'desc']]
     }).then(function (boards) {
         res.json(boards);
     });
@@ -42,14 +42,14 @@ router.get('/free_list/:from', function (req, res, next) {
         where: {
             BoardTypeId: 1
         },
-        include:[{
+        include: [{
             model: User,
             attributes: ['username']
         }],
-        attributes: ['id', 'title','body','createdAt','heart','comment'],
+        attributes: ['id', 'title', 'body', 'createdAt', 'heart', 'comment'],
         offset: req.params.from,
         limit: 10,
-        order: [['createdAt','desc']]
+        order: [['createdAt', 'desc']]
     }).then(function (boards) {
         res.json(boards);
     });
@@ -60,13 +60,13 @@ router.get('/council_list', function (req, res, next) {
         where: {
             BoardTypeId: 2
         },
-        include:[{
+        include: [{
             model: User,
             attributes: ['username']
         }],
-        attributes: ['id', 'title','body','createdAt','heart','comment'],
+        attributes: ['id', 'title', 'body', 'createdAt', 'heart', 'comment'],
         limit: 10,
-        order: [['createdAt','desc']]
+        order: [['createdAt', 'desc']]
     }).then(function (boards) {
         res.json(boards);
     });
@@ -77,14 +77,14 @@ router.get('/council_list/:from', function (req, res, next) {
         where: {
             BoardTypeId: 2
         },
-        include:[{
+        include: [{
             model: User,
             attributes: ['username']
         }],
-        attributes: ['id', 'title','body','createdAt','heart','comment'],
+        attributes: ['id', 'title', 'body', 'createdAt', 'heart', 'comment'],
         limit: 10,
         offset: req.params.from,
-        order: [['createdAt','desc']]
+        order: [['createdAt', 'desc']]
     }).then(function (boards) {
         res.json(boards);
     });
@@ -98,10 +98,10 @@ router.get('/watch/:id', function (req, res, next) {
         include: [
             {
                 model: User,
-                attributes: ['id','username']
+                attributes: ['id', 'username']
             }
         ],
-        attribute:['id', 'title','image','body','createdAt','heart','comment']
+        attribute: ['id', 'title', 'image', 'body', 'createdAt', 'heart', 'comment']
     }).then(function (board) {
         res.json(board);
     }, function (err) {
@@ -121,9 +121,9 @@ router.get('/comment/:boardId', function (req, res, next) {
                 attributes: ['username']
             }
         ],
-        limit:10,
-        attribute:['body','createdAt'],
-        order:[['createdAt','desc']]
+        limit: 10,
+        attribute: ['body', 'createdAt'],
+        order: [['createdAt', 'desc']]
     }).then(function (board) {
         res.json(board);
     }, function (err) {
@@ -142,9 +142,9 @@ router.get('/comment/:boardId/:more', function (req, res, next) {
             }
         ],
         offset: req.params.more,
-        limit:10,
-        attribute:['body','createdAt'],
-        order:[['createdAt','desc']]
+        limit: 10,
+        attribute: ['body', 'createdAt'],
+        order: [['createdAt', 'desc']]
     }).then(function (board) {
         res.json(board);
     }, function (err) {
@@ -152,6 +152,8 @@ router.get('/comment/:boardId/:more', function (req, res, next) {
     });
 });
 router.post('/comment', function (req, res, next) {
+    var bid = req.body.board;
+    var _res = res;
     Comment.create({
         body: req.body.body,
         BoardId: req.body.board,
@@ -165,16 +167,66 @@ router.post('/comment', function (req, res, next) {
             board.increment('comment', {by: 1}).then(function () {
                 res.json(comment.dataValues);
             });
+            if (board.dataValues.UserId == req.body.user) {
+
+            } else {
+                models.User.findOne({
+                    where: {
+                        id: board.dataValues.UserId
+                    }
+                }).then(function (user) {
+                    var sendNotification = function (data) {
+                        var headers = {
+                            "Content-Type": "application/json",
+                            "Authorization": "Basic NmZiYWM5NDctZjc2ZS00Zjg4LWEwY2QtYzYwNzExYWYwODQz"
+                        };
+
+                        var options = {
+                            host: "onesignal.com",
+                            port: 443,
+                            path: "/api/v1/notifications",
+                            method: "POST",
+                            headers: headers
+                        };
+
+                        var https = require('https');
+                        var req = https.request(options, function (res) {
+                            res.on('data', function (data) {
+                                console.log("Response:");
+                                console.log(JSON.parse(data));
+                                _res.json({result: true, data: JSON.parse(data)});
+                            });
+                        });
+
+                        req.on('error', function (e) {
+                            console.log("ERROR:");
+                            console.log(e);
+                            _res.json({result: true, err: e});
+                        });
+
+                        req.write(JSON.stringify(data));
+                        req.end();
+                    };
+
+                    var message = {
+                        app_id: "7ad2ec95-bbbc-4a28-aaf0-097ed2de2177",
+                        contents: {"en": "Someone wrote comment on your board"},
+                        include_player_ids: [user.dataValues.push_id],
+                        data: {"type": "board", boardId: bid}
+                    };
+
+                    sendNotification(message);
+                });
+            }
+            ;
         });
-    });
+    })
 });
-
-
 
 router.post('/upload', multer.single('file'), function (req, res, next) {
     if (req.file) {
         console.log(req.file);
-        var blob = bucket.file(new Date().getTime() + "."+req.file.mimetype.split("/")[1]);
+        var blob = bucket.file(new Date().getTime() + "." + req.file.mimetype.split("/")[1]);
         var blobStream = blob.createWriteStream();
 
         blobStream.on('error', function (err) {
@@ -186,12 +238,12 @@ router.post('/upload', multer.single('file'), function (req, res, next) {
                 'https://storage.googleapis.com/%s/%s',
                 bucket.name, blob.name);
             res.json({
-                result:true,
-                image:publicUrl
+                result: true,
+                image: publicUrl
             });
         });
         blobStream.end(req.file.buffer);
-    }else{
+    } else {
         res.json({result: false});
     }
 });
