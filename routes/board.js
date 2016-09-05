@@ -21,6 +21,7 @@ var storage = gcloud.storage({
 var bucket = storage.bucket("image_yic");
 router.get('/free_list', function (req, res, next) {
     //get board_type list and some boards
+    var uid=req.query.user;
     Board.findAll({
         where: {
             BoardTypeId: 1
@@ -28,8 +29,15 @@ router.get('/free_list', function (req, res, next) {
         include: [{
             model: User,
             attributes: ['username']
+        },{
+            model: models.Board_like,
+            where: {
+                UserId: uid
+            },
+            required: false,
+            attributes: ['id']
         }],
-        attributes: ['id', 'title', 'body', 'createdAt', 'heart', 'comment'],
+        attributes: ['id', 'title', 'body', 'createdAt', 'heart', 'comment','UserId'],
         limit: 10,
         order: [['createdAt', 'desc']]
     }).then(function (boards) {
@@ -38,6 +46,7 @@ router.get('/free_list', function (req, res, next) {
 });
 router.get('/free_list/:from', function (req, res, next) {
     //get board_type list and some boards
+    var uid=req.query.user;
     Board.findAll({
         where: {
             BoardTypeId: 1
@@ -45,8 +54,15 @@ router.get('/free_list/:from', function (req, res, next) {
         include: [{
             model: User,
             attributes: ['username']
+        },{
+            model: models.Board_like,
+            where: {
+                UserId: uid
+            },
+            required: false,
+            attributes: ['id']
         }],
-        attributes: ['id', 'title', 'body', 'createdAt', 'heart', 'comment'],
+        attributes: ['id', 'title', 'body', 'createdAt', 'heart', 'comment','UserId'],
         offset: req.params.from,
         limit: 10,
         order: [['createdAt', 'desc']]
@@ -56,6 +72,7 @@ router.get('/free_list/:from', function (req, res, next) {
 });
 router.get('/council_list', function (req, res, next) {
     //get board_type list and some boards
+    var uid=req.query.user;
     Board.findAll({
         where: {
             BoardTypeId: 2
@@ -63,8 +80,15 @@ router.get('/council_list', function (req, res, next) {
         include: [{
             model: User,
             attributes: ['username']
+        },{
+            model: models.Board_like,
+            where: {
+                UserId: uid
+            },
+            required: false,
+            attributes: ['id']
         }],
-        attributes: ['id', 'title', 'body', 'createdAt', 'heart', 'comment'],
+        attributes: ['id', 'title', 'body', 'createdAt', 'heart', 'comment','UserId'],
         limit: 10,
         order: [['createdAt', 'desc']]
     }).then(function (boards) {
@@ -73,6 +97,7 @@ router.get('/council_list', function (req, res, next) {
 });
 router.get('/council_list/:from', function (req, res, next) {
     //get board_type list and some boards
+    var uid=req.query.user;
     Board.findAll({
         where: {
             BoardTypeId: 2
@@ -80,8 +105,15 @@ router.get('/council_list/:from', function (req, res, next) {
         include: [{
             model: User,
             attributes: ['username']
+        },{
+            model: models.Board_like,
+            where: {
+                UserId: uid
+            },
+            required: false,
+            attributes: ['id']
         }],
-        attributes: ['id', 'title', 'body', 'createdAt', 'heart', 'comment'],
+        attributes: ['id', 'title', 'body', 'createdAt', 'heart', 'comment','UserId'],
         limit: 10,
         offset: req.params.from,
         order: [['createdAt', 'desc']]
@@ -91,6 +123,7 @@ router.get('/council_list/:from', function (req, res, next) {
 });
 
 router.get('/watch/:id', function (req, res, next) {
+    var uid=req.query.user;
     Board.findOne({
         where: {
             id: req.params.id
@@ -99,9 +132,16 @@ router.get('/watch/:id', function (req, res, next) {
             {
                 model: User,
                 attributes: ['id', 'username']
+            },{
+                model: models.Board_like,
+                where: {
+                    UserId: uid
+                },
+                required: false,
+                attributes: ['id']
             }
         ],
-        attribute: ['id', 'title', 'image', 'body', 'createdAt', 'heart', 'comment']
+        attribute: ['id', 'title', 'image', 'body', 'createdAt', 'heart', 'comment','UserId']
     }).then(function (board) {
         res.json(board);
     }, function (err) {

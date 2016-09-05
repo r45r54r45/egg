@@ -104,5 +104,11 @@ router.get("/notice",function(req,res,next){
         res.json(notices);
     })
 });
-
+router.get("/user",function(req,res,next){
+    models.User.findAll({
+        order: [['createdAt','desc']]
+    }).then(function(users){
+        res.json(users);
+    })
+});
 module.exports = router;
